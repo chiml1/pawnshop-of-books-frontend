@@ -72,11 +72,9 @@ class Signup extends Component {
     render() {
         return (
             <div className="signup-container">
-                <h1 className="page-title">Sign Up</h1>
-                <div className="signup-content">
-                    <Form onSubmit={this.handleSubmit} className="signup-form">
-
-
+                <h1>Sign Up</h1>
+                <div>
+                    <Form onSubmit={this.handleSubmit}>
                         <Form.Group>
                             <Form.Control
                                 name="username"
@@ -197,12 +195,12 @@ class Signup extends Component {
         if(password.length < PASSWORD_MIN_LENGTH) {
             return {
                 validateStatus: 'error',
-                errorMsg: `Password is too short (Minimum ${PASSWORD_MIN_LENGTH} characters needed.)`
+                errorMsg: 'Password is too short (Minimum ${PASSWORD_MIN_LENGTH} characters needed.)'
             }
         } else if (password.length > PASSWORD_MAX_LENGTH) {
             return {
                 validationStatus: 'error',
-                errorMsg: `Password is too long (Maximum ${PASSWORD_MAX_LENGTH} characters allowed.)`
+                errorMsg: 'Password is too long (Maximum ${PASSWORD_MAX_LENGTH} characters allowed.)'
             }
         } else {
             return {

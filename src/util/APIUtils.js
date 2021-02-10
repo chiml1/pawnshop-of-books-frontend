@@ -1,10 +1,9 @@
 import { API_BASE_URL, ACCESS_TOKEN } from '../constants/Stuff';
 
-
 const request = (options) => {
     const headers = new Headers({
         'Content-Type': 'application/json',
-    })
+    });
     
     if(localStorage.getItem(ACCESS_TOKEN)) {
         headers.append('Authorization', 'Bearer ' + localStorage.getItem(ACCESS_TOKEN))
@@ -24,7 +23,6 @@ const request = (options) => {
     );
 };
 
-
 export function getAllBooks() {
     return request({
         url: API_BASE_URL + "/books",
@@ -39,16 +37,6 @@ export function createBook(pollData) {
         body: JSON.stringify(pollData)
     });
 }
-
-// export function deleteBook(id) {
-//     return request({
-//         url: API_BASE_URL + "/books/"+id,
-//         method: 'DELETE',
-//     });
-// }
-
-
-
 export function updateBook(id, bookData) {
     return request({
         url: API_BASE_URL + "/books/"+id,
@@ -64,7 +52,6 @@ export function buyBooks(id, book){
         body: JSON.stringify(book)
     })
 }
-
 
 export function login(loginRequest) {
     return request({
@@ -88,8 +75,6 @@ export function checkUsernameAvailability(username) {
         method: 'GET'
     });
 }
-
-
 
 export function getCurrentUser() {
     if(!localStorage.getItem(ACCESS_TOKEN)) {

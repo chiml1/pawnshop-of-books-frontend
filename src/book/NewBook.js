@@ -182,12 +182,12 @@ class NewBook extends Component {
         return (
             <div className="new-book-container">
                 <br/>
-                <h1 className="page-title">Add book</h1>
+                <h1>Add book</h1>
                 <br/>
-                <div className="new-poll-content">
-                    <Form onSubmit={this.handleSubmit} className="create-poll-form">
+                <div>
+                    <Form onSubmit={this.handleSubmit}>
                         <h5>Title</h5>
-                        <Form.Group className="poll-form-row">
+                        <Form.Group>
                             <Form.Control
                                 type="text"
                                 placeholder="Enter title"
@@ -200,7 +200,7 @@ class NewBook extends Component {
                         </Form.Group>
 
                         <h5>Author's first name</h5>
-                        <Form.Group className="poll-form-row">
+                        <Form.Group>
                             <Form.Control
                                 type="text"
                                 placeholder="Enter author's first name"
@@ -213,7 +213,7 @@ class NewBook extends Component {
                         </Form.Group>
 
                         <h5>Author's last name</h5>
-                        <Form.Group className="poll-form-row">
+                        <Form.Group>
                             <Form.Control
                                 type="text"
                                 placeholder="Enter author's last name"
@@ -226,7 +226,7 @@ class NewBook extends Component {
                         </Form.Group>
 
                         <h5>The year of publishment</h5>
-                        <Form.Group className="poll-form-row">
+                        <Form.Group>
                             <Form.Control
                                 type="number"
                                 placeholder="Enter the year of publishment"
@@ -239,7 +239,7 @@ class NewBook extends Component {
                         </Form.Group>
 
                         <h5>Price (zł)</h5>
-                        <Form.Group className="poll-form-row">
+                        <Form.Group>
                             <Form.Control
                                 type="text"
                                 placeholder="Enter price"
@@ -251,7 +251,7 @@ class NewBook extends Component {
                             <span style={{color: "red"}}>{this.state.formErrors["price"]}</span>
                         </Form.Group>
 
-                        <Form.Group className="poll-form-row">
+                        <Form.Group>
                             <Button variant="success" type="submit"
                                     className="create-book-form-button" disabled={!this.state.formValid}>Add
                                 Book</Button>

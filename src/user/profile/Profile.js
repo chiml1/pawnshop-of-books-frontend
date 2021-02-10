@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
-import { getUserProfile } from '../../util/APIUtils';
-import LoadingIndicator  from '../../common/LoadingIndicator';
+import React, {Component} from 'react';
+import {getUserProfile} from '../../util/APIUtils';
+import LoadingIndicator from '../../common/LoadingIndicator';
 import './Profile.css';
 import NotFound from '../../common/NotFound';
 import ServerError from '../../common/ServerError';
-import {Tabs, Tab} from 'react-bootstrap'
+import {Tab, Tabs} from 'react-bootstrap'
 import MyBooks from "../../book/MyBooks";
 
 class Profile extends Component {
@@ -23,13 +23,13 @@ class Profile extends Component {
         });
 
         getUserProfile(username)
-        .then(response => {
-            this.setState({
-                user: response,
-                isLoading: false
-            });
-        }).catch(error => {
-            if(error.status === 404) {
+            .then(response => {
+                this.setState({
+                    user: response,
+                    isLoading: false
+                });
+            }).catch(error => {
+            if (error.status === 404) {
                 this.setState({
                     notFound: true,
                     isLoading: false
@@ -38,42 +38,42 @@ class Profile extends Component {
                 this.setState({
                     serverError: true,
                     isLoading: false
-                });        
+                });
             }
-        });        
+        });
     }
-      
+
     componentDidMount() {
         const username = this.props.match.params.username;
         this.loadUserProfile(username);
     }
 
     componentDidUpdate(nextProps) {
-        if(this.props.match.params.username !== nextProps.match.params.username) {
+        if (this.props.match.params.username !== nextProps.match.params.username) {
             this.loadUserProfile(nextProps.match.params.username);
-        }        
+        }
     }
 
     render() {
-        if(this.state.isLoading) {
-            return <LoadingIndicator />;
+        if (this.state.isLoading) {
+            return <LoadingIndicator/>;
         }
 
-        if(this.state.notFound) {
-            return <NotFound />;
+        if (this.state.notFound) {
+            return <NotFound/>;
         }
 
-        if(this.state.serverError) {
-            return <ServerError />;
+        if (this.state.serverError) {
+            return <ServerError/>;
         }
 
         return (
             <div className="profile">
-                { 
+                {
                     this.state.user ? (
                         <div className="user-profile">
 
-                            <div className="user-poll-details">
+                            <div>
                                 <Tabs defaultActiveKey="added">
                                     <Tab eventKey="bought" title="Bought">
                                         <MyBooks username={this.props.match.params.username} type="added"/>
@@ -83,8 +83,8 @@ class Profile extends Component {
                                     </Tab>
                                 </Tabs>
                             </div>
-                        </div>  
-                    ): null
+                        </div>
+                    ) : null
                 }
             </div>
         );

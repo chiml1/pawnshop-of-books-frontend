@@ -1,6 +1,5 @@
 import {Link, withRouter} from "react-router-dom";
 import React from "react";
-import './Header.css';
 import Nav from 'react-bootstrap/Nav'
 import {Navbar} from "react-bootstrap";
 
@@ -59,7 +58,6 @@ class Header extends React.Component {
             <Navbar bg="dark" variant="dark" expand="sm" fixed="top">
                 <Navbar.Toggle aria-controls="responsive-navbar-nav"/>
                 <Navbar.Collapse id="responsive-navbar-nav">
-
                     {menuItems}
                 </Navbar.Collapse>
             </Navbar>

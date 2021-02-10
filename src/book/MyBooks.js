@@ -77,8 +77,6 @@ class MyBooks extends React.Component{
             </Table>
         )
     }
-
-
 }
 
 export default withRouter(MyBooks);

@@ -90,7 +90,6 @@ class BookList3 extends React.Component {
         );
     };
 
-    //sprawdzam czy bedzie działało z funkcjami strzałkowymi
     onDelClick() {
         let myHeaders = new Headers();
         let url = API_BASE_URL + "/books/" + this.state.link;
