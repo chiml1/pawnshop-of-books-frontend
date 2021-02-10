@@ -1,3 +1,8 @@
-.books{
-    margin-top: 50px
+.bookList{
+    margin-top: 60px;
+}
+@media (max-width: 576px) {
+    .bookList{
+        margin-top: 100px;
+    }
 }

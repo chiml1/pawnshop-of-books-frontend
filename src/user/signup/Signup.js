@@ -54,7 +54,7 @@ class Signup extends Component {
                     open: true,
                     message: "Thank you! You're successfully registered. Please Login to continue!",
                 });
-                setTimeout(function(){this.props.history.push("/login")}.bind(this),1000);
+                setTimeout(function(){this.props.history.push("/login")}.bind(this),2000);
             }).catch(error => {
             this.setState({
                 open: true,

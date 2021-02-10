@@ -1,9 +1,15 @@
 .login-container{
-    margin-top: 40px;
+    margin-top: 60px;
     margin-left: auto;
     margin-right: auto;
     width: 300px;
 }
 .login-form-button{
     width: 300px;
+}
+
+@media (max-width: 576px) {
+    .login-container{
+        margin-top: 100px;
+    }
 }

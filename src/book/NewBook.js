@@ -1,67 +1,54 @@
-import React, { Component } from 'react';
-import { createBook } from '../util/APIUtils';
+import React, {Component} from 'react';
+import {createBook} from '../util/APIUtils';
 import './NewBook.css';
 import Button from "react-bootstrap/Button";
-import { Form } from 'react-bootstrap';
+import {Form} from 'react-bootstrap';
 import Snackbar from '@material-ui/core/Snackbar';
 import {
-    MIN_TITLE_LENGTH,
+    CURRENT_YEAR,
+    MAX_FIRSTNAME_LENGTH,
+    MAX_LASTNAME_LENGTH,
     MAX_TITLE_LENGTH,
     MIN_FIRSTNAME_LENGTH,
-    MAX_FIRSTNAME_LENGTH,
     MIN_LASTNAME_LENGTH,
-    MAX_LASTNAME_LENGTH,CURRENT_YEAR
+    MIN_TITLE_LENGTH
 } from '../constants/Stuff';
 
 class NewBook extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            title: {
-                value: ''
+            title: '',
+            authorFirstName: '',
+            authorLastName: '',
+            theYearOfPublishment: '',
+            price: '',
+            formErrors: {
+                title: '',
+                authorFirstName: '',
+                authorLastName: '',
+                theYearOfPublishment: '',
+                price: ''
             },
-            authorFirstName: {
-                value: ''
-            },
-            authorLastName: {
-                value: ''
-            },
-            theYearOfPublishment: {
-                value: 0.0
-            },
-            price: {
-                value: 0
-            },
-            errors: {},
-            message: "",
-            open: false
-
+            formValid: false,
+            titleValid: false,
+            authorFirstNameValid: false,
+            authorLastNameValid: false,
+            theYearOfPublishmentValid: false,
+            priceValid: false
         };
         this.handleSubmit = this.handleSubmit.bind(this);
-        this.handleInputChange = this.handleInputChange.bind(this);
-    }
 
-    handleInputChange(event, validationFun) {
-        const target = event.target;
-        const inputName = target.name;
-        const inputValue = target.value;
-
-        this.setState({
-            [inputName] : {
-                value: inputValue,
-                ...validationFun(inputValue)
-            }
-        });
     }
 
     handleSubmit(event) {
         event.preventDefault();
         const bookData = {
-            title: this.state.title.value,
-            authorFirstName: this.state.authorFirstName.value,
-            authorLastName: this.state.authorLastName.value,
-            theYearOfPublishment: this.state.theYearOfPublishment.value,
-            price: this.state.price.value,
+            title: this.state.title,
+            authorFirstName: this.state.authorFirstName,
+            authorLastName: this.state.authorLastName,
+            theYearOfPublishment: this.state.theYearOfPublishment,
+            price: this.state.price,
             whoAddedItId: this.props.currentUser.id
         };
         createBook(bookData)
@@ -79,171 +66,117 @@ class NewBook extends Component {
         });
     }
 
-    handleClose = (event, reason) => {
-        this.setState({ open: false });
-    };
-
-
-    isFormInvalid() {
-        return !(this.state.title.validateStatus === 'success' &&
-            this.state.authorFirstName.validateStatus === 'success' &&
-            this.state.authorLastName.validateStatus === 'success' &&
-            this.state.theYearOfPublishment.validateStatus === 'success' &&
-            this.state.price.validateStatus === 'success'
-        );
-    }
-
-    validateTitle = (title) => {
-        let re = /^[a-zA-Z]+$/; //
-
-        if (!re.test(title)) {
-            return {
-                validateStatus: 'error',
-                errorMsg: `Incorrect title`
-            }
-        } else if(title.length < MIN_TITLE_LENGTH) {
-            return {
-                validateStatus: 'error',
-                errorMsg: `Title is too short (Minimum ${MIN_TITLE_LENGTH} characters needed.)`
-            }
-        } else if (title.length > MAX_TITLE_LENGTH) {
-            return {
-                validationStatus: 'error',
-                errorMsg: `Username is too long (Maximum ${MAX_TITLE_LENGTH} characters allowed.)`
-            }
-        } else {
-            this.setState({
-                title: {
-                    value: title,
-                    validateStatus: 'success',
-                    errorMsg: null
-                }
+    handleChange = (e) => {
+        const name = e.target.name;
+        const value = e.target.value;
+        this.setState({[name]: value},
+            () => {
+                this.validateField(name, value)
             });
-            return {
-                validateStatus: 'success',
-                errorMsg: null
-            }
-        }
     };
 
-    validateAuthorFirstName = (authorFirstName) => {
-        let re = /^[a-zA-ZąćęłńóśźżĄĘŁŃÓŚŹŻ]+$/;
+    validateField(fieldName, value) {
+        let fieldValidationErrors = this.state.formErrors;
+        let formValid = this.state.formValid;
+        let titleValid = this.state.titleValid;
+        let authorFirstNameValid = this.state.authorFirstNameValid;
+        let authorLastNameValid = this.state.authorLastNameValid;
+        let theYearOfPublishmentValid = this.state.theYearOfPublishmentValid;
+        let priceValid = this.state.priceValid;
 
-        if (!re.test(authorFirstName)) {
-            return {
-                validateStatus: 'error',
-                errorMsg: `Incorrect first name`
-            }
-        } else if(authorFirstName.length < MIN_FIRSTNAME_LENGTH) {
-            return {
-                validateStatus: 'error',
-                errorMsg: `First name is too short (Minimum ${MIN_FIRSTNAME_LENGTH} characters needed.)`
-            }
-        } else if (authorFirstName.length > MAX_FIRSTNAME_LENGTH) {
-            return {
-                validationStatus: 'error',
-                errorMsg: `First name is too long (Maximum ${MAX_FIRSTNAME_LENGTH} characters allowed.)`
-            }
-        } else {
-            this.setState({
-                authorFirstName: {
-                    value: authorFirstName,
-                    validateStatus: 'success',
-                    errorMsg: null
+        switch (fieldName) {
+            case 'title':
+                let regexTitle = /^([a-zA-Z0-9ĄĆĘŁŃÓŚŹŻąćęłńóśźż]+[\s]?)+$/;
+                if (!regexTitle.test(value)) {
+                    formValid = false;
+                    fieldValidationErrors.title = 'Incorrect title';
+                } else if (value.length < MIN_TITLE_LENGTH) {
+                    console.log("wartosc vaue: " + value);
+                    titleValid = false;
+                    fieldValidationErrors.title = `Title is too short (Minimum ${MIN_TITLE_LENGTH} characters needed.)`;
+                } else if (value.length > MAX_TITLE_LENGTH) {
+                    titleValid = false;
+                    fieldValidationErrors.title = `Username is too long (Maximum ${MAX_TITLE_LENGTH} characters allowed.)`;
+                } else {
+                    titleValid = true;
+                    fieldValidationErrors.title = ''
                 }
-            });
-            return {
-                validateStatus: 'success',
-                errorMsg: null
-            }
-        }
-    };
-
-    validateAuthorLastName = (authorLastName) => {
-        let re = /^[a-zA-Z]+$/;
-        if (!re.test(authorLastName)) {
-            return {
-                validateStatus: 'error',
-                errorMsg: `Incorrect first name`
-            }
-        } else if(authorLastName.length < MIN_LASTNAME_LENGTH) {
-            return {
-                validateStatus: 'error',
-                errorMsg: `Last name is too short (Minimum ${MIN_LASTNAME_LENGTH} characters needed.)`
-            }
-        } else if (authorLastName.length > MAX_LASTNAME_LENGTH) {
-            return {
-                validationStatus: 'error',
-                errorMsg: `Last name is too long (Maximum ${MAX_LASTNAME_LENGTH} characters allowed.)`
-            }
-        } else {
-            this.setState({
-                authorLastName: {
-                    value: authorLastName,
-                    validateStatus: 'success',
-                    errorMsg: null
+                break;
+            case 'authorFirstName':
+                let regexFirstName = /^[a-zA-Z0-9ĆŁŃŚŹŻąćęłńóśźż]+$/;
+                if (!regexFirstName.test(value)) {
+                    authorFirstNameValid = false;
+                    fieldValidationErrors.authorFirstName = `Incorrect first name`;
+                } else if (value.length < MIN_FIRSTNAME_LENGTH) {
+                    authorFirstNameValid = false;
+                    fieldValidationErrors.authorFirstName = `First name is too short (Minimum ${MIN_FIRSTNAME_LENGTH} characters needed.)`;
+                } else if (value.length > MAX_FIRSTNAME_LENGTH) {
+                    authorFirstNameValid = false;
+                    fieldValidationErrors.authorFirstName = `First name is too long (Maximum ${MAX_FIRSTNAME_LENGTH} characters allowed.)`;
+                } else {
+                    authorFirstNameValid = true;
+                    fieldValidationErrors.authorFirstName = ''
                 }
-            });
-            return {
-                validateStatus: 'success',
-                errorMsg: null
-            }
-        }
-    };
-
-    validateYear = (theYearOfPublishment) => {
-        if(theYearOfPublishment === ''){
-            return {
-                validateStatus: 'error',
-                errorMsg: 'Empty year'
-            }
-        }
-        if(theYearOfPublishment > CURRENT_YEAR || theYearOfPublishment < 1900){
-            return {
-                validateStatus: 'error',
-                errorMsg: 'Incorrect year'
-            }
-        } else {
-            this.setState({
-                theYearOfPublishment: {
-                    value: theYearOfPublishment,
-                    validateStatus: 'success',
-                    errorMsg: null
+                break;
+            case 'authorLastName':
+                let regexLastName = /^[a-zA-Z0-9ĆŁŃŚŹŻąćęłńóśźż]+$/;
+                if (!regexLastName.test(value)) {
+                    authorLastNameValid = false;
+                    fieldValidationErrors.authorLastName = `Incorrect first name`
+                } else if (value.length < MIN_LASTNAME_LENGTH) {
+                    authorLastNameValid = false;
+                    fieldValidationErrors.authorLastName = `Last name is too short (Minimum ${MIN_LASTNAME_LENGTH} characters needed.)`
+                } else if (value.length > MAX_LASTNAME_LENGTH) {
+                    authorLastNameValid = false;
+                    fieldValidationErrors.authorLastName = `Last name is too long (Maximum ${MAX_LASTNAME_LENGTH} characters allowed.)`
+                } else {
+                    authorLastNameValid = true;
+                    fieldValidationErrors.authorLastName = ''
                 }
-            });
-            return {
-                validateStatus: 'success',
-                errorMsg: null
-            }
-        }
-
-    };
-
-    validatePrice = (price) => {
-        if(price === ''){
-            return {
-                validateStatus: 'error',
-                errorMsg: 'Empty price'
-            }
-        }
-        if(price <= 0 || price > 200){
-            return {
-                validateStatus: 'error',
-                errorMsg: "Incorrect price"
-            }
+                break;
+            case 'theYearOfPublishment':
+                if (value === '') {
+                    theYearOfPublishmentValid = false;
+                    fieldValidationErrors.theYearOfPublishment = 'Empty year';
+                } else if (value > CURRENT_YEAR || value < 1900) {
+                    theYearOfPublishmentValid = false;
+                    fieldValidationErrors.theYearOfPublishment = 'Incorrect year';
+                } else {
+                    theYearOfPublishmentValid = true;
+                    fieldValidationErrors.theYearOfPublishment = ''
+                }
+                break;
+            case 'price':
+                let regexPrice = /^[0-9]{1,3}[.]?[0-9]{1,2}$/;
+                if (!regexPrice.test(value)) {
+                    priceValid = false;
+                    fieldValidationErrors.price = `Incorrect price! It must be .(dot) between parts`;
+                }
+                //to remove 00.XX to 0.XX or 000.XX to 0.XX
+                else if (parseFloat(value) > 200.00 || parseFloat(value) < 0.01) {
+                    priceValid = false;
+                    fieldValidationErrors.price = `Price must be less than 200 and greater than 0.00`;
+                } else {
+                    priceValid = true;
+                    fieldValidationErrors.price = ''
+                }
+                break;
+            default:
+                break;
         }
         this.setState({
-            price: {
-                value: price,
-                validateStatus: 'success',
-                errorMsg: null
-            }
-        });
-        return {
-            validateStatus: 'success',
-            errorMsg: null
-        }
-    };
+            formErrors: fieldValidationErrors,
+            titleValid: titleValid,
+            authorFirstNameValid: authorFirstNameValid,
+            authorLastNameValid: authorLastNameValid,
+            theYearOfPublishmentValid: theYearOfPublishmentValid,
+            priceValid: priceValid,
+        }, this.validateForm);
+    }
+
+    validateForm() {
+        this.setState({formValid: this.state.titleValid && this.state.authorFirstNameValid && this.state.authorLastNameValid && this.state.theYearOfPublishmentValid && this.state.priceValid});
+    }
 
     render() {
         return (
@@ -253,18 +186,17 @@ class NewBook extends Component {
                 <br/>
                 <div className="new-poll-content">
                     <Form onSubmit={this.handleSubmit} className="create-poll-form">
-
                         <h5>Title</h5>
                         <Form.Group className="poll-form-row">
                             <Form.Control
                                 type="text"
                                 placeholder="Enter title"
                                 name="title"
-                                // onBlur={this.validateUsernameAvailability} tu jest takie cos
-                                onChange={(event) => this.handleInputChange(event, this.validateTitle)}
-                                value={this.state.title.value}
+                                onChange={this.handleChange}
+                                value={this.state.title}
+                                required
                             />
-                            <span style={{color: "red"}}>{this.state.errors["title"]}</span>
+                            <span style={{color: "red"}}>{this.state.formErrors["title"]}</span>
                         </Form.Group>
 
                         <h5>Author's first name</h5>
@@ -273,10 +205,11 @@ class NewBook extends Component {
                                 type="text"
                                 placeholder="Enter author's first name"
                                 name="authorFirstName"
-                                onChange={(event) => this.handleInputChange(event, this.validateAuthorFirstName)}
-                                value={this.state.authorFirstName.value}
+                                onChange={this.handleChange}
+                                value={this.state.authorFirstName}
+                                required
                             />
-                            <span style={{color: "red"}}>{this.state.errors["authorFirstName"]}</span>
+                            <span style={{color: "red"}}>{this.state.formErrors["authorFirstName"]}</span>
                         </Form.Group>
 
                         <h5>Author's last name</h5>
@@ -285,10 +218,11 @@ class NewBook extends Component {
                                 type="text"
                                 placeholder="Enter author's last name"
                                 name="authorLastName"
-                                onChange={(event) => this.handleInputChange(event, this.validateAuthorLastName)}
-                                value={this.state.authorLastName.value}
+                                onChange={this.handleChange}
+                                value={this.state.authorLastName}
+                                required
                             />
-                            <span style={{color: "red"}}>{this.state.errors["authorLastName"]}</span>
+                            <span style={{color: "red"}}>{this.state.formErrors["authorLastName"]}</span>
                         </Form.Group>
 
                         <h5>The year of publishment</h5>
@@ -297,44 +231,41 @@ class NewBook extends Component {
                                 type="number"
                                 placeholder="Enter the year of publishment"
                                 name="theYearOfPublishment"
-                                onChange={(event) => this.handleInputChange(event, this.validateYear)}
-                                value={this.state.theYearOfPublishment.value}
+                                onChange={this.handleChange}
+                                value={this.state.theYearOfPublishment}
+                                required
                             />
-                            <span style={{color: "red"}}>{this.state.errors["theYearOfPublishment"]}</span>
+                            <span style={{color: "red"}}>{this.state.formErrors["theYearOfPublishment"]}</span>
                         </Form.Group>
 
                         <h5>Price (zł)</h5>
                         <Form.Group className="poll-form-row">
                             <Form.Control
-                                type="number"
+                                type="text"
                                 placeholder="Enter price"
                                 name="price"
-                                onChange={(event) => this.handleInputChange(event, this.validatePrice)}
-                                value={this.state.price.value}
+                                onChange={this.handleChange}
+                                value={this.state.price}
+                                required
                             />
-                            <span style={{color: "red"}}>{this.state.errors["price"]}</span>
+                            <span style={{color: "red"}}>{this.state.formErrors["price"]}</span>
                         </Form.Group>
 
                         <Form.Group className="poll-form-row">
                             <Button variant="success" type="submit"
-                                    className="create-book-form-button" disabled={this.isFormInvalid()}>Add Book</Button>
+                                    className="create-book-form-button" disabled={!this.state.formValid}>Add
+                                Book</Button>
                         </Form.Group>
                     </Form>
-                    <div className="label1">
-                        <label>{this.state.title.errorMsg} </label> <br/>
-                        <label>{this.state.authorFirstName.errorMsg} </label> <br/>
-                        <label>{this.state.authorLastName.errorMsg} </label> <br/>
-                        <label>{this.state.theYearOfPublishment.errorMsg} </label> <br/>
-                        <label>{this.state.price.errorMsg}</label>
-                    </div>
-                    <Snackbar
-                        style = {{width: 300, color: 'green'}}
-                        open={this.state.open}  onClose={this.handleClose}
-                        autoHideDuration={3000} message={this.state.message}
-                    />
                 </div>
+                <Snackbar
+                    style={{width: 300, color: 'green'}}
+                    open={this.state.open} onClose={this.handleClose}
+                    autoHideDuration={3000} message={this.state.message}
+                />
             </div>
         );
     }
 }
+
 export default NewBook;
